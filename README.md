@@ -1,12 +1,13 @@
 # Apex Race Forecast Lab
 
+[![Live Product](https://img.shields.io/badge/Live_Product-f1track--lyart.vercel.app-C7FF3D?style=for-the-badge&logo=vercel&logoColor=17111F)](https://f1track-lyart.vercel.app)
 [![CI](https://github.com/dhruvtoprani/f1track/actions/workflows/ci.yml/badge.svg)](https://github.com/dhruvtoprani/f1track/actions/workflows/ci.yml)
 
 Draw a fictional Formula 1 circuit and forecast how often each driver on the 2026 grid wins across 10,000 simulated races.
 
 This is not a scripted “pick a winner” demo. It learns patterns from real OpenF1 race history, studies the circuit you draw, and runs thousands of different race worlds with changing strategy, weather, incidents, reliability, safety cars, and driver execution.
 
-**Links:** [How it works](#how-the-forecast-works) · [Plain-English math](#the-math-without-the-jargon) · [Model results](#how-well-does-it-perform) · [Run locally](#run-locally)
+**Links:** [Live product](https://f1track-lyart.vercel.app) · [How it works](#how-the-forecast-works) · [Plain-English math](#the-math-without-the-jargon) · [Model results](#how-well-does-it-perform) · [Run locally](#run-locally)
 
 ## What you can do
 

@@ -10,3 +10,4 @@ ml/data/processed/
 .venv/
 __pycache__/
 *.pyc
+.vercel

@@ -34,3 +34,4 @@ Short, timestamped checkpoints across the SDLC.
 - 2026-08-21 16:17 EDT — SOTA benchmark: T-REK beat nested-chronologically tuned XGBoost by 5.9% pace, 7.3% qualifying, and 4.6% tyre MAE.
 - 2026-08-21 16:19 EDT — Repository write-up: added method derivation, claim boundary, reproducible benchmark, CI workflow, primary research context, and final secret/test/build checks.
 - 2026-08-21 16:24 EDT — Publication direction: switched `dhruvtoprani/f1track` to public and simplified the README into a common-audience product, math, architecture, and evidence narrative.
+- 2026-08-21 18:50 EDT — Release: published public `main`, linked the GitHub repository to Vercel, and brought the production alias `f1track-lyart.vercel.app` to READY.

@@ -2,6 +2,14 @@
 
 This file records meaningful prioritization, assumptions, and tradeoffs made while building the project.
 
+## 2026-08-21 — Publish the complete release to GitHub and Vercel
+
+- Context: The finished project needed a public source repository, an accessible project narrative, and a live hosted build consistent with the user's other portfolio projects.
+- Decision: Publish the complete tracked project to `dhruvtoprani/f1track`, keep `main` as the public default branch, connect that repository to a Vercel project, and expose the first ready deployment through the stable `f1track-lyart.vercel.app` alias. Keep Vercel's local project metadata ignored.
+- Rationale: The repository now carries the reproducible model, trained artifact, CI, decisions, and readable documentation, while the hosted product gives reviewers an immediate way to experience the forecast workflow.
+- Tradeoffs: The generated Vercel alias is functional but less distinctive than a custom domain. Raw OpenF1 caches, processed training tables, dependencies, and build outputs remain local because they are reproducible or generated and would unnecessarily inflate the repository.
+- Revisit when: A custom domain is available or production analytics, persistence, and scheduled model refreshes become part of the product scope.
+
 ## 2026-08-21 — Benchmark the SOTA claim and lead with a public-audience explanation
 
 - Context: The repository needed a clean public-facing explanation of why T-REK is preferable to state-of-the-art alternatives, but no universal superiority claim is defensible without task-matched evidence. The user explicitly chose a public repository and asked that the main explanation remain accessible to a common audience.
