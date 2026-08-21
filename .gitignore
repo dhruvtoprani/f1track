@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+.DS_Store
+tmp/
+*.log
+*.tsbuildinfo
+ml/data/raw/
+ml/data/processed/
+.venv/
+__pycache__/
+*.pyc
