@@ -5,7 +5,7 @@ Persistent working memory for continuing the build after context compression or 
 ## Current state
 
 - Phase: complete
-- Status: Explainable strategy release is verified and published to the public GitHub/Vercel targets
+- Status: Circuit share-card release is verified; the public GitHub/Vercel targets are listed below
 - Workspace: `/Users/dhruvtoprani/Documents/ChatGPT/f1track`
 - Authoritative specification: `/Users/dhruvtoprani/Downloads/F1TrackSimulation_Toprani.pdf`
 - Current artifact: `APEX-ML-f0c117aca4`
@@ -30,7 +30,7 @@ Persistent working memory for continuing the build after context compression or 
 - Result screen declares the most frequent winner across all samples, raw modeled-win count, 95% Wilson interval, podium/points/DNF probabilities, average finish, strategies, model provenance, and CSV export.
 - The Winner Model Read explains the leader through starting control, track-conditioned package rank, and execution/finish strength, explicitly framed as modeled evidence rather than causal proof.
 - The Strategy Lab lets a user choose a team and apply a balanced, early-undercut, tyre-preservation, or maximum-attack plan. Non-balanced plans run against a same-grid, same-seed, same-random-world baseline and report the isolated team win-probability delta.
-- Share uses the native platform sheet when available and falls back to a clipboard receipt containing the leader, probability, win count, explanation signals, any strategy impact, and product URL.
+- Share generates a 1200×630 PNG containing the exact authored track, leader, win chance and count, top three, conditions, explanation signals, paired strategy impact, sample ID, and product URL. Supported devices receive the PNG through native file sharing; other browsers download it and copy the caption.
 - “Resample 10,000” holds circuit, weather, learned model, and qualifying grid fixed. It changes only the Monte Carlo seed and race-world randomness, retains the prior result, and reports percentage-point deltas plus the expected two-sample movement band.
 - Result hierarchy now leads with a probability dial, top-five comparison bars, precision/lead/compute cards, and an explicit fixed-vs-resampled explanation before the full 22-driver table.
 
@@ -39,6 +39,7 @@ Persistent working memory for continuing the build after context compression or 
 - Vite + React + TypeScript, browser-local persistence and inference.
 - `src/engine/simulator.ts`: qualifying, detailed legacy race engine, optimized batched Monte Carlo. Invariant lookups/inference are precomputed; 40 cooperative progress batches stream `MonteCarloProgress` snapshots.
 - `src/components/RaceControl.tsx`: live forecast runner and completed probability dashboard.
+- `src/components/ForecastShareCard.tsx`: deterministic SVG card composition, local PNG rasterization, native file sharing, and download/caption fallback.
 - `src/styles.css`: Track Intelligence uses a responsive four-metric card region with matched geometry-confidence treatment at desktop/tablet widths and a two-column mobile fallback.
 - `ml/`: cached OpenF1 2023-2026 ingestion, leakage-aware features, NumPy T-REK/logistic/softmax training, recency-aware shrinkage priors, artifact/model-card generation.
 - T-REK maps standardized context to raw plus deterministic random Fourier features, minimizes time-weighted Huber loss with L2 control, and exports the complete projection and coefficient state for identical TypeScript inference.
@@ -58,7 +59,7 @@ Persistent working memory for continuing the build after context compression or 
 
 ## Verification baseline
 
-- 9 TypeScript tests and 2 Python tests pass.
+- 10 TypeScript tests and 2 Python tests pass.
 - `pnpm test:ml`, `pnpm lint`, `pnpm test -- --run`, and `pnpm build` pass.
 - Browser QA verified the live 4,250/10,000 intermediate state, final 10,000 outcome table, all 22 drivers, strategy/model tabs, zero horizontal overflow at 1280×720, and no warning/error console entries.
 - Resample QA verified identical top qualifying markers (`VER`, `NOR`, `RUS`) across two samples; the leader moved from 38.1% to 39.4%, and the UI correctly reported +1.35 percentage points against an approximately ±1.35 pp two-sample 95% movement band.
@@ -67,6 +68,7 @@ Persistent working memory for continuing the build after context compression or 
 - Matched SOTA benchmark: nested-chronologically tuned XGBoost scored 0.1337 pace, 0.1483 qualifying, and 0.6306 s tyre MAE versus T-REK's 0.1258, 0.1375, and 0.6016 s—T-REK advantages of 5.9%, 7.3%, and 4.6%. This is a task-specific result, not a universal SOTA claim.
 - Public release: `https://github.com/dhruvtoprani/f1track` is public with `main` as its default branch, and `https://apex-race-lab.vercel.app` is the branded Vercel production alias. The main README is written for a common audience, deeper math/benchmark documents remain optional, and dependency/build/cache/raw processed data stay ignored while the trained artifact and reproducibility code are included.
 - Explainable-strategy release QA: dynamic labels remain consistent at 250, 1,000, 5,000, and 10,000 outcomes; maximum attack produced a paired, plausible McLaren shift from 30.8% to 34.7% (+3.96 pp) in the inspected sample; balanced mode made no comparison claim. Semantic snapshots verified skip navigation, labeled progress, complete tab semantics with arrow-key navigation, and a captioned forecast table. Axe found zero WCAG 2/2.1 A/AA violations. Browser checks found no horizontal page overflow or interactive targets below 44 px at 375×812, 812×375, or desktop widths; reduced-motion behavior and a zero-warning/error console also passed.
+- Share-card QA: the exact authored circuit and inspected McLaren maximum-attack delta rendered in the preview and downloaded PNG. The exported image is 1200×630 RGBA; native-file-share and download-plus-caption fallback paths were exercised. The modal fits 375×812 without page overflow, has no sub-44 px controls, closes with Escape, restores trigger focus, and produced no console warnings or errors.
 
 ## Open work
 

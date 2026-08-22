@@ -40,3 +40,5 @@ Short, timestamped checkpoints across the SDLC.
 - 2026-08-21 20:00 EDT — Verification: 11 automated tests, typecheck, build, zero-violation WCAG axe audit, and desktop/mobile/landscape browser QA passed.
 - 2026-08-21 20:05 EDT — Release: published the explainable strategy build to public `main`; GitHub CI passed and the stable Vercel production alias reached READY.
 - 2026-08-21 20:06 EDT — URL polish: assigned `apex-race-lab.vercel.app` to production and made it the canonical public link.
+- 2026-08-21 20:19 EDT — Sharing: built the 1200×630 circuit/result card with native file sharing and PNG/caption fallback.
+- 2026-08-21 20:19 EDT — QA: verified exact-track rendering, strategy delta, PNG dimensions, dialog keyboard behavior, mobile fit, and a clean console.

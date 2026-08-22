@@ -124,6 +124,8 @@ A strategy intervention runs beside a balanced baseline with the same qualifying
 
 Circuits are stored in browser `localStorage`. The data contract is `CircuitDraft` from `src/types.ts`; it is JSON serializable and accepted by the import control. Full probability forecasts export to CSV.
 
+Completed results also render into a self-contained SVG share card and rasterize locally to a 1200×630 PNG. Supported devices receive that image through Web Share; other browsers download the PNG and copy its caption. No circuit or forecast data leaves the browser during card generation.
+
 ## Production upgrade path
 
 The research specification's service topology maps cleanly onto the local modules:

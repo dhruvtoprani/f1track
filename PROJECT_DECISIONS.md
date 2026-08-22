@@ -2,6 +2,14 @@
 
 This file records meaningful prioritization, assumptions, and tradeoffs made while building the project.
 
+## 2026-08-21 — Share the authored track and forecast as one image
+
+- Context: The text receipt shared the forecast but omitted the user's most distinctive artifact: the circuit they drew.
+- Decision: Replace text-only sharing with a generated 1200×630 card containing the exact authored track, forecast leader, win chance and count, top three, conditions, model reasons, paired strategy impact, sample ID, and product URL. Use native file sharing where supported, with PNG download plus copied caption as the fallback.
+- Rationale: The result is recognizable without opening the app, preserves the scenario behind the headline, and gives every user a personal visual worth sharing.
+- Tradeoffs: The PNG is a result snapshot, not a reloadable circuit or editable remix link. Browser-native font rendering and share support vary, so the card uses portable fonts and a deterministic local fallback.
+- Revisit when: Persistent circuit URLs can reopen or remix the exact track and strategy configuration.
+
 ## 2026-08-21 — Use a short branded production alias
 
 - Context: Vercel's generated project alias included an arbitrary suffix and weakened the public handoff.
@@ -15,7 +23,7 @@ This file records meaningful prioritization, assumptions, and tradeoffs made whi
 - Context: The forecast was technically complete but still left three product questions unanswered: why the leader won most modeled races, what a user could change, and what was worth sharing. The surrounding UI also needed an accessibility and consistency pass.
 - Decision: Score ten product ideas, eliminate one at a time, and ship the final three: a plain-language Winner Model Read, a paired team Strategy Lab, and a shareable forecast receipt. Run each strategy intervention against a balanced baseline with the same grid, seed, and random race worlds. Apply a supporting pass for semantic tabs, skip navigation, focus visibility, touch targets, contrast, reduced motion, dynamic sample-count copy, responsive layout, and concise language.
 - Rationale: Together the three ideas turn a passive result into an understandable, explorable, and shareable decision tool. Common random numbers reduce comparison noise, so the strategy delta better isolates the selected intervention inside the model.
-- Tradeoffs: Strategy modes are explicit counterfactual assumptions, not learned real-team instructions or causal claims. Sharing uses text and the current product URL rather than persistent circuit-specific links. Accounts, galleries, leagues, and live rooms remain outside the browser-local product boundary.
+- Tradeoffs: Strategy modes are explicit counterfactual assumptions, not learned real-team instructions or causal claims. The share card is a static image rather than a persistent circuit-specific link. Accounts, galleries, leagues, and live rooms remain outside the browser-local product boundary.
 - Revisit when: Usage data supports custom strategy parameters, persistent scenario links, community circuits, or longitudinal forecast calibration.
 
 ## 2026-08-21 — Publish the complete release to GitHub and Vercel

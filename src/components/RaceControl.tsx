@@ -3,13 +3,14 @@ import {
   FlaskConical, Gauge, LockKeyhole, RotateCcw, Share2, ShieldCheck,
   SlidersHorizontal, Sparkles, Target, Timer, Trophy, TrendingUp, Waves, Zap,
 } from 'lucide-react'
-import { useEffect, useMemo, useState, type CSSProperties, type KeyboardEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { driverById, teamById } from '../data/grid'
 import type {
   CircuitDraft, GridEntry, MonteCarloEntry, MonteCarloProgress,
   RaceDriverSnapshot, SimulationPackage, TrackAnalysis, WeatherMode,
 } from '../types'
 import { CircuitMap } from './CircuitMap'
+import { ForecastShareCard } from './ForecastShareCard'
 
 type Tab = 'forecast' | 'strategy' | 'model'
 
@@ -21,25 +22,6 @@ const strategyModeCopy = {
   'tyre-save': { label: 'Tyre preservation', detail: 'The selected team favors longer stints and fewer stops.' },
   attack: { label: 'Maximum attack', detail: 'The selected team accepts more variance and incident risk for upside.' },
 } as const
-
-const copyToClipboard = async (value: string) => {
-  if (navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(value)
-      return
-    } catch {
-      // Clipboard permissions vary by browser; use the selection fallback below.
-    }
-  }
-  const textarea = document.createElement('textarea')
-  textarea.value = value
-  textarea.style.position = 'fixed'
-  textarea.style.opacity = '0'
-  document.body.appendChild(textarea)
-  textarea.select()
-  document.execCommand('copy')
-  textarea.remove()
-}
 
 const wilsonInterval = (wins: number, runs: number): [number, number] => {
   if (runs <= 0) return [0, 0]
@@ -156,7 +138,8 @@ type RaceControlProps = {
 
 export function RaceControl({ simulation, previousSimulation, onBack, onResample }: RaceControlProps) {
   const [tab, setTab] = useState<Tab>('forecast')
-  const [shareStatus, setShareStatus] = useState('')
+  const [shareCardOpen, setShareCardOpen] = useState(false)
+  const shareButtonRef = useRef<HTMLButtonElement>(null)
   const leader = simulation.monteCarlo[0]
   const runnerUp = simulation.monteCarlo[1]
   const contenders = simulation.monteCarlo.slice(0, 5)
@@ -192,29 +175,6 @@ export function RaceControl({ simulation, previousSimulation, onBack, onResample
   ), 0)
   const strategyDelta = baselineTeamWinProbability === undefined ? null : strategyTeamWinProbability - baselineTeamWinProbability
 
-  const shareForecast = async () => {
-    const strategyLine = strategyDelta === null
-      ? ''
-      : ` ${strategyTeam.shortName}'s ${strategyMode.label.toLowerCase()} changed team win probability by ${strategyDelta >= 0 ? '+' : ''}${(strategyDelta * 100).toFixed(1)} percentage points.`
-    const text = `Apex forecast: ${winner.firstName} ${winner.lastName} leads at ${percent(leader.wins)} on ${simulation.circuit.name}, winning ${Math.round(leader.wins * simulation.monteCarloRuns).toLocaleString()} of ${simulation.monteCarloRuns.toLocaleString()} modeled races. The model favors a P${winnerGrid.position} start, a ${winnerGrid.paceRating.toFixed(1)} track-conditioned package rating, and a ${percent(finishRate)} finish rate.${strategyLine}`
-    const url = window.location.href
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: 'Apex Race Forecast', text, url })
-        setShareStatus('Shared')
-      } else {
-        await copyToClipboard(`${text}\n${url}`)
-        setShareStatus('Copied')
-      }
-      window.setTimeout(() => setShareStatus(''), 2400)
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') return
-      await copyToClipboard(`${text}\n${url}`)
-      setShareStatus('Copied')
-      window.setTimeout(() => setShareStatus(''), 2400)
-    }
-  }
-
   const moveTab = (event: KeyboardEvent<HTMLButtonElement>, current: Tab) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
     event.preventDefault()
@@ -249,10 +209,9 @@ export function RaceControl({ simulation, previousSimulation, onBack, onResample
         <button className="back-button" onClick={onBack}><ArrowLeft size={16} /> Circuit studio</button>
         <div className="race-identity"><span className="complete-pill"><ShieldCheck size={12} /> FORECAST COMPLETE</span><div><small>{simulation.monteCarloRuns.toLocaleString()} INDEPENDENT OUTCOMES · {simulation.weatherMode.toUpperCase()}</small><h1>{simulation.circuit.name}</h1></div></div>
         <div className="race-actions">
-          <button className="secondary-button" onClick={shareForecast}><Share2 size={15} /> {shareStatus || 'Share'}</button>
+          <button ref={shareButtonRef} className="secondary-button" onClick={() => setShareCardOpen(true)}><Share2 size={15} /> Share card</button>
           <button className="secondary-button" onClick={exportForecast}><Download size={15} /> Export</button>
           <button className="resample-button" onClick={onResample} title={`Keep the circuit, weather, model and qualifying grid fixed; draw ${simulation.monteCarloRuns.toLocaleString()} new race outcomes`}><RotateCcw size={15} /> Resample {simulation.monteCarloRuns.toLocaleString()}</button>
-          <span className="sr-only" role="status" aria-live="polite">{shareStatus ? `Forecast ${shareStatus.toLowerCase()}` : ''}</span>
         </div>
       </section>
 
@@ -370,6 +329,10 @@ export function RaceControl({ simulation, previousSimulation, onBack, onResample
           <article><Activity size={25} /><small>LIMITS & UNCERTAINTY</small><h3>{Math.round(simulation.calibration.confidence * 100)}% context confidence</h3><p className="model-caveat">{simulation.calibration.caveat}</p><p>The 95% intervals shown in the forecast table measure finite-simulation sampling error. They do not include every source of model misspecification, regulation change, setup choice, or future driver/team development.</p><div className="feature-cloud"><span>OpenF1 timing</span><span>Temporal Huber</span><span>Kernel features</span><span>Competing risks</span><span>Nested holdout</span><span>Track geometry</span><span>{simulation.monteCarloRuns.toLocaleString()} Monte Carlo</span></div></article>
         </div>}
       </section>
+      {shareCardOpen && <ForecastShareCard simulation={simulation} onClose={() => {
+        setShareCardOpen(false)
+        window.requestAnimationFrame(() => shareButtonRef.current?.focus())
+      }} />}
     </main>
   )
 }

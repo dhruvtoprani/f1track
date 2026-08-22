@@ -19,7 +19,7 @@ This is not a scripted “pick a winner” demo. It learns patterns from real Op
 6. Simulate 10,000 races and see every driver's win, podium, points, and DNF probability.
 7. Change one team's strategy and compare it with a paired baseline using the same race worlds.
 8. See why the leader is favored through grid, track-package, and execution signals.
-9. Share a compact forecast receipt, or resample while keeping the track and starting grid fixed.
+9. Generate a 1200×630 share card with the exact track, result, conditions, top three, and strategy impact—or resample while keeping the track and starting grid fixed.
 
 The headline result is the driver who wins the largest share of modeled races—not a promise that one exact outcome will happen.
 
