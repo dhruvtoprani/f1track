@@ -11,3 +11,5 @@ ml/data/processed/
 __pycache__/
 *.pyc
 .vercel
+output/
+.playwright-cli/

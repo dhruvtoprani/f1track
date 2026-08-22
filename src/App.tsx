@@ -8,7 +8,7 @@ import { mlModelSummary } from './data/mlRuntime'
 import { analyzeCircuit } from './engine/geometry'
 import { runMonteCarlo, simulateQualifying } from './engine/simulator'
 import { hashSeed } from './engine/random'
-import type { CircuitDraft, GridEntry, MonteCarloProgress, SimulationPackage, WeatherMode } from './types'
+import type { CircuitDraft, GridEntry, MonteCarloProgress, SimulationPackage, StrategyScenario, WeatherMode } from './types'
 
 const MIN_SIMULATION_DISPLAY_MS = 2800
 
@@ -28,6 +28,7 @@ export default function App() {
   const [circuit, setCircuit] = useState<CircuitDraft>(getInitialCircuit)
   const [weather, setWeather] = useState<WeatherMode>('dry')
   const [monteCarloRuns, setMonteCarloRuns] = useState(10000)
+  const [strategyScenario, setStrategyScenario] = useState<StrategyScenario>({ teamId: 'mclaren', mode: 'balanced' })
   const [simulation, setSimulation] = useState<SimulationPackage | null>(null)
   const [previousSimulation, setPreviousSimulation] = useState<SimulationPackage | null>(null)
   const [isRunning, setIsRunning] = useState(false)
@@ -81,10 +82,13 @@ export default function App() {
       : simulateQualifying(circuit, track, weather, qualifyingSeed)
     setRunGrid(grid)
     const startedAt = performance.now()
+    const baselineMonteCarlo = strategyScenario.mode === 'balanced'
+      ? undefined
+      : await runMonteCarlo(circuit, track, grid, weather, monteCarloRuns, undefined, monteCarloSeed)
     const monteCarlo = await runMonteCarlo(circuit, track, grid, weather, monteCarloRuns, (value) => {
       setProgress(value.progress)
       setRunProgress(value)
-    }, monteCarloSeed)
+    }, monteCarloSeed, strategyScenario)
     const payload: SimulationPackage = {
       id: `sim-${Date.now()}`,
       createdAt: new Date().toISOString(),
@@ -96,6 +100,8 @@ export default function App() {
       durationMs: performance.now() - startedAt,
       monteCarloRuns,
       monteCarlo,
+      baselineMonteCarlo,
+      strategyScenario,
       calibration: {
         season: calibrationSnapshot.season,
         modelVersion: mlModelSummary.version,
@@ -131,18 +137,19 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <header className="app-header">
         <button className="brand" onClick={() => { setSimulation(null); setPreviousSimulation(null) }} aria-label="Apex home"><span className="brand-mark"><i /><i /><i /></span><span><strong>APEX</strong><small>RACE FORECAST LAB</small></span></button>
         <nav aria-label="Project stages">
-          <span className={!simulation && !isRunning ? 'is-active' : 'is-complete'}><b>01</b> Circuit</span>
+          <span className={!simulation && !isRunning ? 'is-active' : 'is-complete'} aria-current={!simulation && !isRunning ? 'step' : undefined}><b>01</b> Circuit</span>
           <i />
           <span className={!simulation && !isRunning ? '' : 'is-complete'}><b>02</b> Intelligence</span>
           <i />
-          <span className={simulation || isRunning ? 'is-active' : ''}><b>03</b> Forecast</span>
+          <span className={isRunning ? 'is-active' : simulation ? 'is-complete' : ''} aria-current={isRunning ? 'step' : undefined}><b>03</b> Forecast</span>
           <i />
-          <span className={simulation ? 'is-active' : ''}><b>04</b> Analysis</span>
+          <span className={simulation ? 'is-active' : ''} aria-current={simulation ? 'step' : undefined}><b>04</b> Analysis</span>
         </nav>
-        <div className="header-status"><span><Radio size={13} /> 2026 GRID</span><span><Database size={13} /> ML {mlModelSummary.version.slice(-10)}</span><span aria-label="Local project"><GitBranch size={16} /></span></div>
+        <div className="header-status"><span><Radio size={13} /> 2026 GRID</span><span><Database size={13} /> ML {mlModelSummary.version.slice(-10)}</span><a href="https://github.com/dhruvtoprani/f1track" target="_blank" rel="noreferrer" aria-label="Open the Apex GitHub repository"><GitBranch size={16} /></a></div>
       </header>
 
       {isRunning ? (
@@ -160,9 +167,11 @@ export default function App() {
           track={track}
           weather={weather}
           monteCarloRuns={monteCarloRuns}
+          strategyScenario={strategyScenario}
           onCircuitChange={setCircuit}
           onWeatherChange={setWeather}
           onRunsChange={setMonteCarloRuns}
+          onStrategyScenarioChange={setStrategyScenario}
           onSimulate={() => simulate(false)}
           onSave={saveCircuit}
           onImport={importCircuit}
@@ -171,7 +180,7 @@ export default function App() {
         />
       )}
 
-      <footer className="app-footer"><span><ShieldCheck size={14} /> Real-data ML · reproducible OpenF1 training</span><span>Geometry → Learned performance → Strategy → 10,000 outcomes</span><button onClick={saveCircuit}><Save size={13} /> Save state</button></footer>
+      <footer className="app-footer"><span><ShieldCheck size={14} /> Real-data ML · reproducible OpenF1 training</span><span>Geometry → Learned performance → Strategy → Monte Carlo outcomes</span><button onClick={saveCircuit}><Save size={13} /> Save state</button></footer>
       {toast && <div className="toast" role="status">{toast}</div>}
     </div>
   )

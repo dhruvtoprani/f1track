@@ -89,11 +89,11 @@ export function CircuitMap({ circuit, track, editable = false, mode = 'draw', on
   return (
     <div className={`circuit-map-shell ${compact ? 'is-compact' : ''}`}>
       {editable && (
-        <div className="map-toolbar" aria-label="Circuit drawing tools">
-          <button className={mode === 'draw' ? 'is-active' : ''} onClick={() => onModeChange?.('draw')} title="Draw circuit" aria-label="Draw circuit"><PenLine size={17} /></button>
-          <button className={mode === 'start' ? 'is-active' : ''} onClick={() => onModeChange?.('start')} title="Place start and finish" aria-label="Place start and finish"><Flag size={17} /></button>
-          <button className={mode === 'pit-entry' ? 'is-active' : ''} onClick={() => onModeChange?.('pit-entry')} title="Place pit entry" aria-label="Place pit entry"><LocateFixed size={17} /></button>
-          <button className={mode === 'pit-exit' ? 'is-active' : ''} onClick={() => onModeChange?.('pit-exit')} title="Place pit exit" aria-label="Place pit exit"><Route size={17} /></button>
+        <div className="map-toolbar" role="toolbar" aria-label="Circuit drawing tools">
+          <button aria-pressed={mode === 'draw'} className={mode === 'draw' ? 'is-active' : ''} onClick={() => onModeChange?.('draw')} title="Draw circuit" aria-label="Draw circuit"><PenLine size={17} /></button>
+          <button aria-pressed={mode === 'start'} className={mode === 'start' ? 'is-active' : ''} onClick={() => onModeChange?.('start')} title="Place start and finish" aria-label="Place start and finish"><Flag size={17} /></button>
+          <button aria-pressed={mode === 'pit-entry'} className={mode === 'pit-entry' ? 'is-active' : ''} onClick={() => onModeChange?.('pit-entry')} title="Place pit entry" aria-label="Place pit entry"><LocateFixed size={17} /></button>
+          <button aria-pressed={mode === 'pit-exit'} className={mode === 'pit-exit' ? 'is-active' : ''} onClick={() => onModeChange?.('pit-exit')} title="Place pit exit" aria-label="Place pit exit"><Route size={17} /></button>
           <span className="toolbar-spacer" />
           <button onClick={undo} title="Undo drawing" aria-label="Undo drawing"><Undo2 size={17} /></button>
           <button onClick={() => onChange?.({ ...circuit, points: [], updatedAt: new Date().toISOString() })} title="Clear circuit" aria-label="Clear circuit"><Trash2 size={17} /></button>

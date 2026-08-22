@@ -23,6 +23,7 @@ import type {
   RaceEvent,
   RaceResult,
   RaceSnapshot,
+  StrategyScenario,
   TrackAnalysis,
   WeatherMode,
 } from '../types'
@@ -558,6 +559,7 @@ export const runMonteCarlo = async (
   runs: number,
   onProgress?: ProgressCallback,
   seed = hashSeed(`${circuit.id}:monte-carlo:${weatherMode}:${runs}`),
+  strategyScenario?: StrategyScenario,
 ): Promise<MonteCarloEntry[]> => {
   const random = new SeededRandom(seed)
   const startedAt = performance.now()
@@ -594,15 +596,36 @@ export const runMonteCarlo = async (
     const wetRace = weatherMode === 'wet' || (weatherMode === 'dynamic' && random.chance(0.58))
     const classified = profiles.map((profile) => {
       const { entry, driver, team } = profile
+      const strategyMode = strategyScenario?.teamId === team.id ? strategyScenario.mode : 'balanced'
       const priorDnfProbability = clamp((100 - team.car.reliability) / 430 + (driver.skill.risk - 50) / 1700 + (wetRace ? 0.018 : 0), 0.01, 0.15)
-      const dnfProbability = clamp(priorDnfProbability * 0.58 + profile.learnedIncident * 0.42, 0.008, 0.22)
+      const attackHazard = strategyMode === 'attack' ? 0.004 : 0
+      const dnfProbability = clamp(priorDnfProbability * 0.58 + profile.learnedIncident * 0.42 + attackHazard, 0.008, 0.24)
       const dnf = random.chance(dnfProbability)
-      const strategicStops = wetRace ? random.integer(2, 4) : track.tyreStress > 76 ? (random.chance(0.72) ? 2 : 1) : (random.chance(0.18) ? 2 : 1)
-      const strategyEffect = team.car.strategy * 0.11 - strategicStops * 0.22 + random.normal(0, safetyCar ? 2.6 : 1.15)
+      const baselineStops = wetRace ? random.integer(2, 4) : track.tyreStress > 76 ? (random.chance(0.72) ? 2 : 1) : (random.chance(0.18) ? 2 : 1)
+      const strategicStops = wetRace
+        ? baselineStops
+        : strategyMode === 'undercut'
+          ? Math.max(2, baselineStops)
+          : strategyMode === 'tyre-save'
+            ? 1
+            : baselineStops
+      const scenarioBonus = strategyMode === 'undercut'
+        ? clamp(0.12 + track.overtakingDifficulty * 0.005 + track.tyreStress * 0.0025 - track.pitLossSeconds * 0.006, -0.18, 0.38)
+        : strategyMode === 'tyre-save'
+          ? clamp(-0.06 + (team.car.tyreLife - 85) * 0.008 + (70 - track.tyreStress) * 0.003, -0.18, 0.25)
+          : strategyMode === 'attack'
+            ? clamp(0.10 + track.passingZones.length * 0.025 + (100 - track.overtakingDifficulty) * 0.0007, 0.10, 0.28)
+            : 0
+      const strategyVariance = strategyMode === 'attack' ? 0.16 : strategyMode === 'tyre-save' ? -0.08 : 0
+      const strategyEffect = team.car.strategy * 0.11 - strategicStops * 0.22 + scenarioBonus + random.normal(0, Math.max(0.75, (safetyCar ? 2.6 : 1.15) + strategyVariance))
       const wetSkill = wetRace ? driver.skill.wet * 0.16 : 0
       const learnedPerformance = (0.5 - profile.learnedFinish) * 12
       const score = profile.rating + learnedPerformance + driver.skill.racecraft * 0.17 + wetSkill + profile.gridEffect + strategyEffect + random.normal(0, 1.35 + track.oodScore * 2.3)
-      const strategy = wetRace ? `${entry.startingCompound}→I→${random.chance(0.4) ? 'W' : 'M'}` : strategicStops === 2 ? `${entry.startingCompound}→M→H` : `${entry.startingCompound}→H`
+      const strategy = wetRace
+        ? `${entry.startingCompound}→I→${random.chance(0.4) ? 'W' : 'M'}`
+        : strategyMode === 'attack'
+          ? strategicStops === 2 ? `${entry.startingCompound}→S→M` : `${entry.startingCompound}→M`
+          : strategicStops === 2 ? `${entry.startingCompound}→M→H` : `${entry.startingCompound}→H`
       return { driverId: entry.driverId, dnf, score, stops: strategicStops, strategy }
     }).sort((a, b) => Number(a.dnf) - Number(b.dnf) || b.score - a.score)
 

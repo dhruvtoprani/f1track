@@ -51,4 +51,17 @@ describe('race simulator', () => {
       expect(entry.dnfs).toBeLessThanOrEqual(1)
     })
   })
+
+  it('isolates a selected team strategy against a paired baseline', async () => {
+    const grid = simulateQualifying(circuit, track, 'dry', 2027)
+    const baseline = await runMonteCarlo(circuit, track, grid, 'dry', 800, undefined, 2028)
+    const balanced = await runMonteCarlo(circuit, track, grid, 'dry', 800, undefined, 2028, { teamId: 'mclaren', mode: 'balanced' })
+    const attack = await runMonteCarlo(circuit, track, grid, 'dry', 800, undefined, 2028, { teamId: 'mclaren', mode: 'attack' })
+    const mclarenIds = new Set(drivers.filter((driver) => driver.teamId === 'mclaren').map((driver) => driver.id))
+    const teamWins = (entries: typeof baseline) => entries.reduce((sum, entry) => mclarenIds.has(entry.driverId) ? sum + entry.wins : sum, 0)
+
+    expect(balanced).toEqual(baseline)
+    expect(teamWins(attack)).not.toBe(teamWins(baseline))
+    expect(attack.reduce((sum, entry) => sum + entry.wins, 0)).toBeCloseTo(1, 8)
+  })
 })

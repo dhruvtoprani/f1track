@@ -116,6 +116,10 @@ Monte Carlo runs use a lower-detail path and retain sufficient statistics only:
 
 Invariant team/driver lookups and learned predictions are precomputed once per forecast. Forty progress batches stream partial normalized distributions, run count, elapsed time, and throughput to the live UI. Work is yielded between batches to keep the browser responsive. The completed dashboard derives its headline, table, strategies, and CSV from the same aggregate object and reports 95% Wilson sampling intervals.
 
+### Paired strategy experiments
+
+A strategy intervention runs beside a balanced baseline with the same qualifying grid, simulation seed, and random-number sequence. Only the selected team's strategy transform changes. This common-random-number design reduces comparison noise and lets the UI report the team's baseline win probability, intervention probability, and percentage-point delta. It is a modeled counterfactual, not a claim about a real team's hidden instructions.
+
 ## Persistence and export
 
 Circuits are stored in browser `localStorage`. The data contract is `CircuitDraft` from `src/types.ts`; it is JSON serializable and accepted by the import control. Full probability forecasts export to CSV.
@@ -139,4 +143,4 @@ The UI does not depend on where those computations run.
 
 Automated tests cover chronology isolation, artifact provenance/contracts, model output domains, path closure, uniform resampling, intersection detection, physical sample/race-distance derivation, deterministic qualifying, Q1/Q2/Q3 advancement, full classification invariants, lap-history completeness, and normalized Monte Carlo distributions.
 
-Browser QA covers circuit authoring controls, a visible intermediate 10,000-run batch, final win counts and intervals, strategy/model tabs, all 22 probability rows, horizontal overflow, and runtime console output.
+Browser QA covers circuit authoring controls, a visible intermediate batch, paired-strategy output, winner explanations, share behavior, final win counts and intervals, keyboard-operated tabs, all 22 probability rows, responsive overflow, touch targets, reduced motion, and runtime console output. Automated axe checks cover WCAG 2/2.1 A and AA rules.

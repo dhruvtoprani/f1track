@@ -1,7 +1,8 @@
-import { Activity, ArrowRight, CloudRain, Download, Gauge, Play, RefreshCw, Save, Sparkles, Upload, Wind } from 'lucide-react'
+import { Activity, ArrowRight, CloudRain, Gauge, Play, RefreshCw, Save, SlidersHorizontal, Sparkles, Upload } from 'lucide-react'
 import { useRef, useState, type CSSProperties } from 'react'
+import { teams } from '../data/grid'
 import { circuitPresets } from '../data/presets'
-import type { CircuitDraft, TrackAnalysis, WeatherMode } from '../types'
+import type { CircuitDraft, StrategyMode, StrategyScenario, TrackAnalysis, WeatherMode } from '../types'
 import { CircuitMap, type EditorMode } from './CircuitMap'
 import { Metric } from './Metric'
 
@@ -10,9 +11,11 @@ type Props = {
   track: TrackAnalysis
   weather: WeatherMode
   monteCarloRuns: number
+  strategyScenario: StrategyScenario
   onCircuitChange: (circuit: CircuitDraft) => void
   onWeatherChange: (weather: WeatherMode) => void
   onRunsChange: (runs: number) => void
+  onStrategyScenarioChange: (scenario: StrategyScenario) => void
   onSimulate: () => void
   onSave: () => void
   onImport: (file: File) => void
@@ -22,12 +25,20 @@ type Props = {
 
 const meter = (value: number) => `${Math.round(value)}/100`
 
+const strategyOptions: { value: StrategyMode; label: string; detail: string }[] = [
+  { value: 'balanced', label: 'Balanced baseline', detail: 'Use the learned team strategy with no intervention.' },
+  { value: 'undercut', label: 'Early undercut', detail: 'Prioritize clean air with an earlier extra stop.' },
+  { value: 'tyre-save', label: 'Tyre preservation', detail: 'Favor longer stints and fewer stops.' },
+  { value: 'attack', label: 'Maximum attack', detail: 'Trade a little reliability for more upside and variance.' },
+]
+
 export function CircuitStudio({
-  circuit, track, weather, monteCarloRuns, onCircuitChange, onWeatherChange,
-  onRunsChange, onSimulate, onSave, onImport, isRunning, progress,
+  circuit, track, weather, monteCarloRuns, strategyScenario, onCircuitChange, onWeatherChange,
+  onRunsChange, onStrategyScenarioChange, onSimulate, onSave, onImport, isRunning, progress,
 }: Props) {
   const [mode, setMode] = useState<EditorMode>('draw')
   const fileInput = useRef<HTMLInputElement>(null)
+  const strategyDetail = strategyOptions.find((option) => option.value === strategyScenario.mode)?.detail
 
   const loadPreset = (id: string) => {
     const preset = circuitPresets.find((item) => item.id === id)
@@ -41,13 +52,13 @@ export function CircuitStudio({
   })
 
   return (
-    <main className="studio-page">
+    <main className="studio-page" id="main-content" tabIndex={-1}>
       <section className="studio-intro">
         <div>
           <span className="eyebrow"><Sparkles size={14} /> Track-conditioned race intelligence</span>
           <h1>Draw the circuit.<br /><em>Forecast the field.</em></h1>
         </div>
-        <p>Author a circuit with one gesture. The engine infers its physics, builds a 2026 qualifying grid, then runs 10,000 independent race outcomes to estimate each driver's win probability.</p>
+        <p>Author a circuit with one gesture. The engine infers its physics, builds a 2026 qualifying grid, then runs {monteCarloRuns.toLocaleString()} independent race outcomes to estimate each driver's win probability.</p>
       </section>
 
       <section className="studio-grid">
@@ -105,10 +116,10 @@ export function CircuitStudio({
           <div className="character-chips">{track.character.map((item) => <span key={item}>{item}</span>)}</div>
 
           <div className="telemetry-meters">
-            <div><span>Downforce demand <b>{meter(track.downforceDemand)}</b></span><i><em style={{ width: `${track.downforceDemand}%` }} /></i></div>
-            <div><span>Power sensitivity <b>{meter(track.powerSensitivity)}</b></span><i><em style={{ width: `${track.powerSensitivity}%` }} /></i></div>
-            <div><span>Tyre stress <b>{meter(track.tyreStress)}</b></span><i><em style={{ width: `${track.tyreStress}%` }} /></i></div>
-            <div><span>Passing difficulty <b>{meter(track.overtakingDifficulty)}</b></span><i><em style={{ width: `${track.overtakingDifficulty}%` }} /></i></div>
+            <div><span>Downforce demand <b>{meter(track.downforceDemand)}</b></span><i role="progressbar" aria-label="Downforce demand" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(track.downforceDemand)}><em style={{ width: `${track.downforceDemand}%` }} /></i></div>
+            <div><span>Power sensitivity <b>{meter(track.powerSensitivity)}</b></span><i role="progressbar" aria-label="Power sensitivity" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(track.powerSensitivity)}><em style={{ width: `${track.powerSensitivity}%` }} /></i></div>
+            <div><span>Tyre stress <b>{meter(track.tyreStress)}</b></span><i role="progressbar" aria-label="Tyre stress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(track.tyreStress)}><em style={{ width: `${track.tyreStress}%` }} /></i></div>
+            <div><span>Passing difficulty <b>{meter(track.overtakingDifficulty)}</b></span><i role="progressbar" aria-label="Passing difficulty" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(track.overtakingDifficulty)}><em style={{ width: `${track.overtakingDifficulty}%` }} /></i></div>
           </div>
 
           <div className="similarity-block">
@@ -126,8 +137,8 @@ export function CircuitStudio({
         <div className="launch-settings">
           <div>
             <span className="launch-label"><CloudRain size={15} /> Weather model</span>
-            <div className="segmented-control">
-              {(['dry', 'wet', 'dynamic'] as WeatherMode[]).map((item) => <button key={item} className={weather === item ? 'is-active' : ''} onClick={() => onWeatherChange(item)}>{item}</button>)}
+            <div className="segmented-control" role="group" aria-label="Weather model">
+              {(['dry', 'wet', 'dynamic'] as WeatherMode[]).map((item) => <button key={item} aria-pressed={weather === item} className={weather === item ? 'is-active' : ''} onClick={() => onWeatherChange(item)}>{item}</button>)}
             </div>
           </div>
           <div>
@@ -136,7 +147,20 @@ export function CircuitStudio({
               <option value={250}>250 runs</option><option value={1000}>1,000 runs</option><option value={5000}>5,000 runs</option><option value={10000}>10,000 runs</option>
             </select>
           </div>
-          <div className="launch-facts"><span><Wind size={15} /> {track.passingZones.length} passing zones</span><span><Download size={15} /> Exportable telemetry</span></div>
+          <div className="strategy-launch-control">
+            <span className="launch-label"><SlidersHorizontal size={15} /> Team strategy experiment</span>
+            <div className="strategy-selects">
+              <label className="sr-only" htmlFor="strategy-team">Team to change</label>
+              <select id="strategy-team" value={strategyScenario.teamId} onChange={(event) => onStrategyScenarioChange({ ...strategyScenario, teamId: event.target.value })}>
+                {teams.map((team) => <option value={team.id} key={team.id}>{team.name}</option>)}
+              </select>
+              <label className="sr-only" htmlFor="strategy-mode">Strategy plan</label>
+              <select id="strategy-mode" value={strategyScenario.mode} onChange={(event) => onStrategyScenarioChange({ ...strategyScenario, mode: event.target.value as StrategyMode })}>
+                {strategyOptions.map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}
+              </select>
+            </div>
+            <small>{strategyDetail}</small>
+          </div>
         </div>
         <button className="simulate-button" onClick={onSimulate} disabled={!track.valid || isRunning}>
           {isRunning ? <><i style={{ '--progress': `${progress * 360}deg` } as CSSProperties} /> Simulating {Math.round(progress * 100)}%</> : <><Play size={19} fill="currentColor" /> Run {monteCarloRuns.toLocaleString()} forecasts <span>→</span></>}

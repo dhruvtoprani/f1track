@@ -17,7 +17,9 @@ This is not a scripted “pick a winner” demo. It learns patterns from real Op
 4. Choose dry, wet, or changing weather.
 5. Run a full 2026 qualifying session.
 6. Simulate 10,000 races and see every driver's win, podium, points, and DNF probability.
-7. Resample another 10,000 races while keeping the same track and starting grid.
+7. Change one team's strategy and compare it with a paired baseline using the same race worlds.
+8. See why the leader is favored through grid, track-package, and execution signals.
+9. Share a compact forecast receipt, or resample while keeping the track and starting grid fixed.
 
 The headline result is the driver who wins the largest share of modeled races—not a promise that one exact outcome will happen.
 
@@ -30,8 +32,9 @@ flowchart LR
     A["Circuit drawing"] --> B["Track intelligence"]
     B --> C["Real-data ML model"]
     C --> D["Qualifying and race profiles"]
-    D --> E["10,000-race simulation"]
-    E --> F["Win probabilities and uncertainty"]
+    D --> E["Baseline or paired strategy experiment"]
+    E --> F["10,000-race simulation"]
+    F --> G["Win probabilities, reasons, and uncertainty"]
 ```
 
 ### 1. Track intelligence
@@ -45,6 +48,8 @@ The shipped model, **APEX T-REK**, was trained on public OpenF1 history from 202
 ### 3. Race-world simulation
 
 The learned model supplies the starting probabilities and performance profiles. The simulator then creates independent race worlds by varying factors such as strategy, traffic, tyre wear, pit stops, reliability, safety cars, and execution.
+
+The Strategy Lab can change one team's plan while holding the grid, seed, and random race worlds fixed. That paired comparison makes the reported percentage-point change easier to interpret than two unrelated simulations.
 
 ### 4. Probability, not certainty
 
@@ -120,7 +125,7 @@ src/data/         2026 grid, model runtime, and trained artifact
 ml/               OpenF1 ingestion, feature building, training, evaluation
 ```
 
-More detail is available in [ARCHITECTURE.md](./ARCHITECTURE.md), [MODEL_CARD.md](./ml/MODEL_CARD.md), and [the ML pipeline guide](./ml/README.md).
+More detail is available in [ARCHITECTURE.md](./ARCHITECTURE.md), [MODEL_CARD.md](./ml/MODEL_CARD.md), [the ML pipeline guide](./ml/README.md), and [the product-improvement funnel](./PRODUCT_IDEAS.md).
 
 ## Data and limitations
 

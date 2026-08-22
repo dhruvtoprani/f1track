@@ -2,6 +2,14 @@
 
 This file records meaningful prioritization, assumptions, and tradeoffs made while building the project.
 
+## 2026-08-21 — Close the explanation, agency, and sharing loops
+
+- Context: The forecast was technically complete but still left three product questions unanswered: why the leader won most modeled races, what a user could change, and what was worth sharing. The surrounding UI also needed an accessibility and consistency pass.
+- Decision: Score ten product ideas, eliminate one at a time, and ship the final three: a plain-language Winner Model Read, a paired team Strategy Lab, and a shareable forecast receipt. Run each strategy intervention against a balanced baseline with the same grid, seed, and random race worlds. Apply a supporting pass for semantic tabs, skip navigation, focus visibility, touch targets, contrast, reduced motion, dynamic sample-count copy, responsive layout, and concise language.
+- Rationale: Together the three ideas turn a passive result into an understandable, explorable, and shareable decision tool. Common random numbers reduce comparison noise, so the strategy delta better isolates the selected intervention inside the model.
+- Tradeoffs: Strategy modes are explicit counterfactual assumptions, not learned real-team instructions or causal claims. Sharing uses text and the current product URL rather than persistent circuit-specific links. Accounts, galleries, leagues, and live rooms remain outside the browser-local product boundary.
+- Revisit when: Usage data supports custom strategy parameters, persistent scenario links, community circuits, or longitudinal forecast calibration.
+
 ## 2026-08-21 — Publish the complete release to GitHub and Vercel
 
 - Context: The finished project needed a public source repository, an accessible project narrative, and a live hosted build consistent with the user's other portfolio projects.

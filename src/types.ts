@@ -1,7 +1,13 @@
 export type Point = { x: number; y: number }
 export type WeatherMode = 'dry' | 'wet' | 'dynamic'
+export type StrategyMode = 'balanced' | 'undercut' | 'tyre-save' | 'attack'
 export type Compound = 'S' | 'M' | 'H' | 'I' | 'W'
 export type RaceControl = 'GREEN' | 'VSC' | 'SC'
+
+export type StrategyScenario = {
+  teamId: string
+  mode: StrategyMode
+}
 
 export type CircuitDraft = {
   id: string
@@ -213,6 +219,8 @@ export type SimulationPackage = {
   durationMs: number
   monteCarloRuns: number
   monteCarlo: MonteCarloEntry[]
+  baselineMonteCarlo?: MonteCarloEntry[]
+  strategyScenario: StrategyScenario
   calibration: {
     season: number
     modelVersion: string
