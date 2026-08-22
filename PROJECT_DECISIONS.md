@@ -2,6 +2,14 @@
 
 This file records meaningful prioritization, assumptions, and tradeoffs made while building the project.
 
+## 2026-08-21 — Use a short branded production alias
+
+- Context: Vercel's generated project alias included an arbitrary suffix and weakened the public handoff.
+- Decision: Point `apex-race-lab.vercel.app` at the verified production deployment and make it the canonical URL in repository links and page metadata.
+- Rationale: The alias matches the product name, is readable aloud, and contains no generated deployment identifier.
+- Tradeoffs: This remains a Vercel subdomain rather than a separately purchased custom domain.
+- Revisit when: A dedicated first-party domain is available.
+
 ## 2026-08-21 — Close the explanation, agency, and sharing loops
 
 - Context: The forecast was technically complete but still left three product questions unanswered: why the leader won most modeled races, what a user could change, and what was worth sharing. The surrounding UI also needed an accessibility and consistency pass.

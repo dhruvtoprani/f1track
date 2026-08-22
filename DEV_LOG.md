@@ -39,3 +39,4 @@ Short, timestamped checkpoints across the SDLC.
 - 2026-08-21 19:48 EDT — Implementation: added the Winner Model Read, paired Strategy Lab, forecast receipt, and site-wide consistency/accessibility cleanup.
 - 2026-08-21 20:00 EDT — Verification: 11 automated tests, typecheck, build, zero-violation WCAG axe audit, and desktop/mobile/landscape browser QA passed.
 - 2026-08-21 20:05 EDT — Release: published the explainable strategy build to public `main`; GitHub CI passed and the stable Vercel production alias reached READY.
+- 2026-08-21 20:06 EDT — URL polish: assigned `apex-race-lab.vercel.app` to production and made it the canonical public link.

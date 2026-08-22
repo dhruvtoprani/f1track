@@ -10,7 +10,7 @@ Persistent working memory for continuing the build after context compression or 
 - Authoritative specification: `/Users/dhruvtoprani/Downloads/F1TrackSimulation_Toprani.pdf`
 - Current artifact: `APEX-ML-f0c117aca4`
 - Public repository: `https://github.com/dhruvtoprani/f1track` with default branch `main`
-- Live product: `https://f1track-lyart.vercel.app`
+- Live product: `https://apex-race-lab.vercel.app`
 
 ## Operating instructions
 
@@ -65,7 +65,7 @@ Persistent working memory for continuing the build after context compression or 
 - Current UI QA at 1280×720 measured four equal 166×94 Track Intelligence cards and a matched 230×94 confidence card with zero document overflow. A fast completed forecast remained in the explicit completed/preparing state at 900 ms and revealed results after 2.880 seconds; console warning/error count remained zero.
 - T-REK verification: schema v2 model dimensions and all coefficients are finite; Python artifact tests, TypeScript inference/simulator tests, strict typecheck, and production build pass. The attempted fresh browser regression was not completed because Browser Use blocked localhost navigation after the preview was restarted; prior UI QA remains the visual baseline.
 - Matched SOTA benchmark: nested-chronologically tuned XGBoost scored 0.1337 pace, 0.1483 qualifying, and 0.6306 s tyre MAE versus T-REK's 0.1258, 0.1375, and 0.6016 s—T-REK advantages of 5.9%, 7.3%, and 4.6%. This is a task-specific result, not a universal SOTA claim.
-- Public release: `https://github.com/dhruvtoprani/f1track` is public with `main` as its default branch, and `https://f1track-lyart.vercel.app` is the ready Vercel production alias. The main README is written for a common audience, deeper math/benchmark documents remain optional, and dependency/build/cache/raw processed data stay ignored while the trained artifact and reproducibility code are included.
+- Public release: `https://github.com/dhruvtoprani/f1track` is public with `main` as its default branch, and `https://apex-race-lab.vercel.app` is the branded Vercel production alias. The main README is written for a common audience, deeper math/benchmark documents remain optional, and dependency/build/cache/raw processed data stay ignored while the trained artifact and reproducibility code are included.
 - Explainable-strategy release QA: dynamic labels remain consistent at 250, 1,000, 5,000, and 10,000 outcomes; maximum attack produced a paired, plausible McLaren shift from 30.8% to 34.7% (+3.96 pp) in the inspected sample; balanced mode made no comparison claim. Semantic snapshots verified skip navigation, labeled progress, complete tab semantics with arrow-key navigation, and a captioned forecast table. Axe found zero WCAG 2/2.1 A/AA violations. Browser checks found no horizontal page overflow or interactive targets below 44 px at 375×812, 812×375, or desktop widths; reduced-motion behavior and a zero-warning/error console also passed.
 
 ## Open work
