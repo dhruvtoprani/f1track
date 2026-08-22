@@ -5,7 +5,7 @@ Persistent working memory for continuing the build after context compression or 
 ## Current state
 
 - Phase: complete
-- Status: Circuit share-card release is verified; the public GitHub/Vercel targets are listed below
+- Status: Circuit share-card release is verified and published to the public GitHub/Vercel targets
 - Workspace: `/Users/dhruvtoprani/Documents/ChatGPT/f1track`
 - Authoritative specification: `/Users/dhruvtoprani/Downloads/F1TrackSimulation_Toprani.pdf`
 - Current artifact: `APEX-ML-f0c117aca4`
@@ -69,6 +69,7 @@ Persistent working memory for continuing the build after context compression or 
 - Public release: `https://github.com/dhruvtoprani/f1track` is public with `main` as its default branch, and `https://apex-race-lab.vercel.app` is the branded Vercel production alias. The main README is written for a common audience, deeper math/benchmark documents remain optional, and dependency/build/cache/raw processed data stay ignored while the trained artifact and reproducibility code are included.
 - Explainable-strategy release QA: dynamic labels remain consistent at 250, 1,000, 5,000, and 10,000 outcomes; maximum attack produced a paired, plausible McLaren shift from 30.8% to 34.7% (+3.96 pp) in the inspected sample; balanced mode made no comparison claim. Semantic snapshots verified skip navigation, labeled progress, complete tab semantics with arrow-key navigation, and a captioned forecast table. Axe found zero WCAG 2/2.1 A/AA violations. Browser checks found no horizontal page overflow or interactive targets below 44 px at 375×812, 812×375, or desktop widths; reduced-motion behavior and a zero-warning/error console also passed.
 - Share-card QA: the exact authored circuit and inspected McLaren maximum-attack delta rendered in the preview and downloaded PNG. The exported image is 1200×630 RGBA; native-file-share and download-plus-caption fallback paths were exercised. The modal fits 375×812 without page overflow, has no sub-44 px controls, closes with Escape, restores trigger focus, and produced no console warnings or errors.
+- Share-card release: commit `00fe0bd` was published to public `main`; GitHub CI passed all ML, type, test, and build jobs, and `apex-race-lab.vercel.app` was assigned to the READY production deployment.
 
 ## Open work
 

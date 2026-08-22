@@ -42,3 +42,4 @@ Short, timestamped checkpoints across the SDLC.
 - 2026-08-21 20:06 EDT — URL polish: assigned `apex-race-lab.vercel.app` to production and made it the canonical public link.
 - 2026-08-21 20:19 EDT — Sharing: built the 1200×630 circuit/result card with native file sharing and PNG/caption fallback.
 - 2026-08-21 20:19 EDT — QA: verified exact-track rendering, strategy delta, PNG dimensions, dialog keyboard behavior, mobile fit, and a clean console.
+- 2026-08-21 20:21 EDT — Release: published the share-card build to public `main`; CI passed and the clean production alias reached READY.
